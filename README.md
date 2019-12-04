@@ -4,8 +4,13 @@ Detects duplicate files regardless of name, size in Salesforce. This is not a pa
 ## Usage
 You can create the following objects & upload the code to your own Salesforce instance. After uploading, simply queue the process by
 calling the following from either a controller or anonymous execution window. 
-**Make sure to set your own key and secret first at the top of the FileScanner**
-
+**Make sure to set your own key and secret first at the top of the FileScanner class**
+```java
+// src/classes/FileScanner.cls
+String key = 'PUT_YOUR_OWN_KEY_HERE';
+String secret = 'PUT_YOUR_OWN_SECRET_HERE';
+```
+Then queue the FileScanner class. After that is done, queue up the FileScannerCleanup class.
 ```java
 // Do initial scan
 Id batchJobId = Database.executeBatch(new FileScanner(2019, 'myemail@mydomain.com'), 500);
