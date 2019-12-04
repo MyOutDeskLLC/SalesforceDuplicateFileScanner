@@ -23,7 +23,7 @@ public class FileScannerCleanup_Test {
         insert file;
 
         Test.startTest();
-        FileScannerCleanup fileClean = new FileScannerCleanup();
+        FileScannerCleanup fileClean = new FileScannerCleanup(10, 'test@example.com');
         Database.executeBatch(fileClean);
         Test.stopTest();
 
