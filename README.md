@@ -3,7 +3,8 @@ Detects duplicate files regardless of name, size in Salesforce. This is not a pa
 
 ## Usage
 You can create the following objects & upload the code to your own Salesforce instance. After uploading, simply queue the process by
-calling the following from either a controller or anonymous execution window
+calling the following from either a controller or anonymous execution window. 
+**Make sure to set your own key and secret first at the top of the FileScanner**
 
 ```java
 // Do initial scan
