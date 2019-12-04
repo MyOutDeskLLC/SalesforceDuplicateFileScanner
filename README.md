@@ -8,9 +8,8 @@ calling the following from either a controller or anonymous execution window
 ```java
 // Do initial scan
 Id batchJobId = Database.executeBatch(new FileScanner(2019, 'myemail@mydomain.com'), 500);
-Id batchJobId = Database.executeBatch(new FileScannerCleanup(10, 'myemail@mydomain.com'), 500);
 // After this is done, run the cleanup operation
-
+Id batchJobId = Database.executeBatch(new FileScannerCleanup(10, 'myemail@mydomain.com'), 500);
 ```
 
 ## How It Works
