@@ -159,17 +159,12 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>value__c</fullName>
+        <fullName>Should_Delete__c</fullName>
+        <defaultValue>false</defaultValue>
         <externalId>false</externalId>
-        <formula>1</formula>
-        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-        <label>value</label>
-        <precision>18</precision>
-        <required>false</required>
-        <scale>0</scale>
+        <label>Should Delete</label>
         <trackTrending>false</trackTrending>
-        <type>Number</type>
-        <unique>false</unique>
+        <type>Checkbox</type>
     </fields>
     <label>FileScan File</label>
     <nameField>
