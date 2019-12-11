@@ -5,6 +5,7 @@
  */
 public class FileScannerMarker implements Database.Batchable<SObject>, Database.Stateful {
     List<String> knownFirstHashes = new List<String>();
+    Set<Id> originalFiles = new Set<Id>();
     Map<String, Integer> deletionInformation = new Map<String, Integer>();
     Boolean sandbox = true;
 
@@ -54,6 +55,12 @@ public class FileScannerMarker implements Database.Batchable<SObject>, Database.
         // Examine them for the first occurrence of a given file
         // If we have not seen the hash yet then we know it must be the first occurrence due to the order by File_Created_Date__c
         for (FileScan_File__c file : allFiles) {
+            // If this is a file that we have identified as an original (if we hit a boundary between runs where we re-query the same hash set)
+            // We can simply skip it the second time around
+            if(originalFiles.contains(file.Id)) {
+                continue;
+            }
+            // If we have never seen this hash before then we can store this specific file ID in the original file set as well as keep a copy of the hash
             if (!knownFirstHashes.contains(file.Hash__c)) {
                 emailInformation += 'Original File Found: ' + file.File_Name__c + ' created on ' + file.File_Created_Date__c + '\r\n';
                 emailInformation += 'Original File Hash: ' + file.Hash__c + '\r\n';
