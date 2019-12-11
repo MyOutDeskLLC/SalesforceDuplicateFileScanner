@@ -4,13 +4,11 @@
  * for deletion
  */
 public class FileScannerMarker implements Database.Batchable<SObject>, Database.Stateful {
+    Map<String, Integer> deletionInformation = new Map<String, Integer>();
     List<String> knownFirstHashes = new List<String>();
     Set<Id> originalFiles = new Set<Id>();
-    Map<String, Integer> deletionInformation = new Map<String, Integer>();
-    Boolean sandbox = true;
-
-    String emailInformation = '';
     String emailResultsTo = '';
+    Boolean sandbox = true;
 
 
     public FileScannerMarker(String emailResultsTo) {
@@ -48,7 +46,7 @@ public class FileScannerMarker implements Database.Batchable<SObject>, Database.
             }
             hashesToProcess.add(String.valueOf(availableHash.get('Hash__c')));
         }
-        
+
         // Examine them for the first occurrence of a given file
         // If we have not seen the hash yet then we know it must be the first occurrence due to the order by File_Created_Date__c
         for (FileScan_File__c file : [SELECT File_Id__c, File_Name__c, Hash__c,File_Created_Date__c FROM FileScan_File__c WHERE Hash__c IN :hashesToProcess ORDER BY File_Created_Date__c ASC]) {
@@ -59,21 +57,12 @@ public class FileScannerMarker implements Database.Batchable<SObject>, Database.
             }
             // If we have never seen this hash before then we can store this specific file ID in the original file set as well as keep a copy of the hash
             if (!knownFirstHashes.contains(file.Hash__c)) {
-                emailInformation += 'Original File Found: ' + file.File_Name__c + ' created on ' + file.File_Created_Date__c + '\r\n';
-                emailInformation += 'Original File Hash: ' + file.Hash__c + '\r\n';
                 knownFirstHashes.add(file.Hash__c);
-                deletionInformation.put(file.Hash__c, 0);
             } else {
                 file.Should_Delete__c = true;
                 filesToMarkForDeletion.add(file);
-                deletionInformation.put(file.Hash__c, deletionInformation.get(file.Hash__c) + 1);
             }
         }
-
-        for (String hashToDelete : deletionInformation.keySet()) {
-            emailInformation += hashToDelete + ' (' + String.valueOf(deletionInformation.get(hashToDelete)) + ')\r\n';
-        }
-
         Database.update(filesToMarkForDeletion, true);
     }
 
@@ -87,7 +76,7 @@ public class FileScannerMarker implements Database.Batchable<SObject>, Database.
         Messaging.SingleEmailMessage message = new Messaging.SingleEmailMessage();
         message.toAddresses = new String[]{ emailResultsTo };
         message.subject = 'FileScanner Marker Complete';
-        message.plainTextBody = emailInformation;
+        message.plainTextBody = 'FileScanner Marker has finished runnning';
 
         if (!sandbox) {
             Messaging.SingleEmailMessage[] messages =   new List<Messaging.SingleEmailMessage> {message};
