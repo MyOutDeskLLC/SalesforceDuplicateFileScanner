@@ -48,13 +48,10 @@ public class FileScannerMarker implements Database.Batchable<SObject>, Database.
             }
             hashesToProcess.add(String.valueOf(availableHash.get('Hash__c')));
         }
-
-        // Get all files for this list of hashes
-        List<FileScan_File__c> allFiles = new List<FileScan_File__c>([SELECT File_Id__c, File_Name__c, Hash__c,File_Created_Date__c FROM FileScan_File__c WHERE Hash__c IN :hashesToProcess ORDER BY File_Created_Date__c ASC]);
-
+        
         // Examine them for the first occurrence of a given file
         // If we have not seen the hash yet then we know it must be the first occurrence due to the order by File_Created_Date__c
-        for (FileScan_File__c file : allFiles) {
+        for (FileScan_File__c file : [SELECT File_Id__c, File_Name__c, Hash__c,File_Created_Date__c FROM FileScan_File__c WHERE Hash__c IN :hashesToProcess ORDER BY File_Created_Date__c ASC]) {
             // If this is a file that we have identified as an original (if we hit a boundary between runs where we re-query the same hash set)
             // We can simply skip it the second time around
             if(originalFiles.contains(file.Id)) {
