@@ -16,6 +16,12 @@ Then queue the FileScanner class. After that is done, queue up the FileScannerCl
 Id batchJobId = Database.executeBatch(new FileScanner(2019, 'myemail@mydomain.com'), 500);
 // After this is done, run the cleanup operation
 Id batchJobId = Database.executeBatch(new FileScannerCleanup(10, 'myemail@mydomain.com'), 500);
+// After cleanup results, we can run the marker to locate the first instance of a given file that was discovered
+Id batchJobId = Database.executeBatch(new FileScannerMarker('myemail@mydomain.com'), 10);
+// If this fails or is interrupted by governor limits being hit, queue a rollback operation here to mark them again for processing
+Id batchJobId = Database.executeBatch(new FileScannerMarkerRollback('myemail@mydomain.com'), 10);
+// After marking, we can process the files marked for deletion DO NOT DO THIS WITHOUT BACKING UP FILES
+Id batchJobId = Database.executeBatch(new FileScannerDestroyer('myemail@mydomain.com'), 500);
 ```
 
 ## How It Works
@@ -34,6 +40,15 @@ on the file. After computing the hash of all files, you will want to queue a cle
 We recommend using a report on the included object and it will automatically have "open file" so you can preview results.
 
 ![Report Results](https://user-images.githubusercontent.com/5719851/70189069-1f60ab80-16a7-11ea-9501-bc5f87f5d622.png)
+
+## File Marker
+Included in this is a batch operation specifically aimed to mark files for deletion. The code will look for the first known instance of a hash and mark it for saving while marking all other files with the same hash for deletion.
+
+## File Marker Rollback
+Due to various conditions such as file sizes, amount of records, etc we created a Rollback class to roll back the marking process if it is interrupted. We cannot automatically queue this, so please reference the processing apex jobs to know if it encountered a governor limit.
+
+## File Destroyer
+This final component will delete files marked by the file marker and set the Deleted__c checkbox to true. **Do not run this until you have made a backup.**
 
 ## Cleaning Up
 We found removing any copy of the hash after the first known version (file created date) worked best. Keep one, remove the others.
