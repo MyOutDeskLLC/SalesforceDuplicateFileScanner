@@ -166,6 +166,14 @@
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
     </fields>
+     <fields>
+        <fullName>Deleted__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Deleted</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
     <label>FileScan File</label>
     <nameField>
         <label>FileScan File Name</label>

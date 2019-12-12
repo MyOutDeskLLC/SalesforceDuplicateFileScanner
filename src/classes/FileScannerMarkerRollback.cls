@@ -17,10 +17,10 @@ public class FileScannerMarkerRollback implements Database.Batchable<SObject>, D
     public void execute(Database.BatchableContext param1, List<FileScan_File__c> files) {
         List<FileScan_File__c> filesToUpdate = new List<FileScan_File__c>();
         for(FileScan_File__c file : files) {
+            file.Deleted__c = false;
             file.Should_Delete__c = false;
             filesToUpdate.add(file);
         }
-
         Database.update(filesToUpdate, true);
     }
 

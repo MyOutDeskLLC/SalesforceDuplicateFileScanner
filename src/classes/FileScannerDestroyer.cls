@@ -22,11 +22,13 @@ public class FileScannerDestroyer implements Database.Batchable<SObject>, Databa
     public void execute(Database.BatchableContext param1, List<FileScan_File__c> files) {
         Set<Id> filesToRemove = new Set<Id>();
         for (FileScan_File__c file : files) {
+            file.Deleted__c = true;
             filesToRemove.add(Id.valueOf(file.File_Id__c));
         }
         List<Attachment> attachments = new List<Attachment>([SELECT Id FROM Attachment WHERE Id IN :filesToRemove]);
         filesRemoved += attachments.size();
         Database.delete(attachments, true);
+        Database.update(files, true);
     }
 
     /**
