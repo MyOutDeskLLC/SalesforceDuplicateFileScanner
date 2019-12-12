@@ -12,7 +12,7 @@ public class FileScannerDestroyer implements Database.Batchable<SObject>, Databa
     }
 
     public Iterable<SObject> start(Database.BatchableContext param1) {
-        return Database.getQueryLocator('SELECT File_Id__c from FileScan_File__c where Should_Delete__c = TRUE');
+        return Database.getQueryLocator('SELECT File_Id__c from FileScan_File__c where Should_Delete__c = TRUE AND Deleted__c = FALSE');
     }
 
     /**
